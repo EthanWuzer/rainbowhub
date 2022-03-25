@@ -1,11 +1,16 @@
+import numpy as np
 import configparser
 import hashlib
+import math
 import random
 import logging
 import pickle
 import itertools
+import time
+from mpi4py import MPI
 from constants import CHARSETS_SECTION, MAIN_CONFIG_FILE
 from algorithm import Algorithm
+
 
 
 class RainbowTable:
@@ -121,22 +126,38 @@ class RainbowTable:
 
 
     def generate_table(self):
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()
+        rank = comm.Get_rank()
         '''generates the full table
         '''
+        start_time = time.time()
         collisions = 0
-        self.table = {}
-        for _ in range(self.number_of_chains):
-            # generates a random password of allowed length
-            randomPassword = ''.join(random.choices(
-                self.charset,
-                k = random.randint(self.min_length, self.max_length))
-            )
+        if rank == 0:
+            print("Beginning execution on processor", rank, "on", self.number_of_chains//size, "chains")
+        else:
+            
+            self.table = {}
+            num_chains = self.number_of_chains//size
+            for _ in range(self.number_of_chains//size):
+                # generates a random password of allowed length
+                randomPassword = ''.join(random.choices(
+                    self.charset,
+                    k = random.randint(self.min_length, self.max_length))
+                )
 
-            chainTail = self.generate_chain(randomPassword)
-            if(chainTail in self.table):
-                collisions += 1
-            self.table[chainTail] = randomPassword
+                chainTail = self.generate_chain(randomPassword)
+                if(chainTail in self.table):
+                    collisions += 1
+                self.table[chainTail] = randomPassword
+            
+        data = comm.gather(self.number_of_chains//size, root=0)
+        totalTime = comm.gather(time.time()-start_time, root=0)
+        
+        if rank == 0:
+            print(size, "processes finished. Average execution time:", math.fsum(totalTime)/size, "seconds")
         logging.debug("collisions detected: " + str(collisions))
+        print("Finished execution on processor", rank, "in:", time.time()-start_time, "seconds")
 
 
     def save_to_file(self, filename):

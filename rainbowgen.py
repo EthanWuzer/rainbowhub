@@ -14,6 +14,7 @@ try:
     parser.add_argument("output_file", help="name of output file")
     args = parser.parse_args()
 
+
     rt = RainbowTable(args.algorithm, args.charset, args.min_length, args.max_length, args.chain_length, args.number_of_chains)
     rt.generate_table()
     rt.save_to_file(args.output_file)
