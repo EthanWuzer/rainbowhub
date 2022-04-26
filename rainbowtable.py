@@ -157,7 +157,7 @@ class RainbowTable:
         if rank == 0:
             print(size, "processes finished. Average execution time:", math.fsum(totalTime)/size, "seconds")
         logging.debug("collisions detected: " + str(collisions))
-        print("Finished execution on processor", rank, "in:", time.time()-start_time, "seconds")
+        #print("Finished execution on processor", rank, "in:", time.time()-start_time, "seconds")
 
 
     def save_to_file(self, filename):
