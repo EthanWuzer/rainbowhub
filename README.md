@@ -1,7 +1,7 @@
 # RainbowHub
 [![CircleCI](https://circleci.com/gh/bobctr/rainbowhub.svg?style=svg)](https://circleci.com/gh/bobctr/rainbowhub) [![codecov](https://codecov.io/gh/bobctr/rainbowhub/branch/master/graph/badge.svg)](https://codecov.io/gh/bobctr/rainbowhub)
 
-
+ALL CREDIT FOR ORIGINAL DEVELOPMENT GOES TO GITHUB USER bobctr https://github.com/bobctr/rainbowhub
 Simple Rainbow tables implementation.
 
 ## What a rainbow table is and how it is implemented
@@ -46,7 +46,7 @@ If you want to add a custom one, just add it at the end of the file.
 To generate a new table
 
 ```
-python3 rainbowgen.py algorithm_name charset_name min_password_length max_massword_length chain_length n_chains output_file
+mpiexec -n number_of_cores python3 rainbowgen.py algorithm_name charset_name min_password_length max_massword_length chain_length n_chains output_file
 ```
 - ```algorithm_name```: name of the hashing algorithm (currently SHA1 and MD5 are available)
 - ```charset_name```: name of the charset used to generate random plaintext (available charsets are defined in settings.py)
@@ -64,8 +64,8 @@ python3 rainbowcrack.py hash_string table_file
 - ```hash_string```: string containing the hash to crack
 - ```table_file```: file containing the generated rainbow table (conventionally with extension *.rt*)
 
-Example:
+Example (using message passing interface for table generator):
 ```
-python3 rainbowgen.py sha1 alphanumeric 1 6 20 1000 test_table.rt
+mpiexec -n 5 python3 rainbowgen.py sha1 alphanumeric 1 6 20 1000 test_table.rt
 python3 rainbowcrack.py "1e4e888ac66f8dd41e00c5a7ac36a32a9950d271" test_table.rt
 ```
