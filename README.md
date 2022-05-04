@@ -48,6 +48,7 @@ To generate a new table
 ```
 mpiexec -n number_of_cores python3 rainbowgen.py algorithm_name charset_name min_password_length max_massword_length chain_length n_chains output_file
 ```
+- ```number_of_cores```: The number of cores to run the program on (must not exceed available cores on machine)
 - ```algorithm_name```: name of the hashing algorithm (currently SHA1 and MD5 are available)
 - ```charset_name```: name of the charset used to generate random plaintext (available charsets are defined in settings.py)
 - ```min_password_length```
